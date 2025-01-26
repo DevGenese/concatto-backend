@@ -1,0 +1,22 @@
+{
+  "name": "concatto-backend",
+  "version": "1.0.0",
+  "description": "concatto api desenvolvida em nodejs com pgsql",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DevGenese/concatto-backend.git"
+  },
+  "author": "devgenese",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DevGenese/concatto-backend/issues"
+  },
+  "homepage": "https://github.com/DevGenese/concatto-backend#readme",
+  "dependencies": {
+    "express": "4.21.2"
+  }
+}
