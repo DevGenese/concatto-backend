@@ -10,9 +10,9 @@ class ExpenseController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public static function index()
     {
-        //
+        return Response('success', 200)->content(json_encode(Expense::all()));
     }
 
     /**

@@ -14,7 +14,7 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware(['auth:sanctum'])->group(function(){
+Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('cooperatives', CooperativeController::class);
     Route::apiResource('locations', LocationController::class);
     Route::apiResource('localities', LocalityController::class);
@@ -23,3 +23,4 @@ Route::middleware(['auth:sanctum'])->group(function(){
     Route::apiResource('schedule-users', ScheduleUserController::class);
     Route::apiResource('expenses', ExpenseController::class);
 });
+
