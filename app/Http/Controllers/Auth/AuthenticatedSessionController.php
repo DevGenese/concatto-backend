@@ -15,20 +15,28 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): Response
     {
-        $request->authenticate();
-
-        $request->session()->regenerate();
-
-        $user = Auth::user();
-
-        return response()->json([
-            'message' => 'Login successful',
-            'success' => true,
-            'data' => [
-                'token' => $user->createToken('auth_token')->plainTextToken,
-                'user' => $user,
-            ],
+        // Validação dos dados de entrada
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
         ]);
+
+        // Tentativa de autenticação
+        if (Auth::attempt($credentials)) {
+            $user = Auth::user();
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'message' => 'Login realizado com sucesso!',
+                'token' => $token,
+                'user' => $user,
+            ], 200);
+        }
+
+        // Se a autenticação falhar
+        return response()->json([
+            'message' => 'Credenciais inválidas.',
+        ], 401);
     }
 
     /**
