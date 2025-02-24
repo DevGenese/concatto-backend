@@ -24,7 +24,7 @@ class AuthenticatedSessionController extends Controller
         // Tentativa de autenticação
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            $token = $user->createToken('auth_token')->plainTextToken;
+            $token = $user->createTokenDriver('auth_token')->plainTextToken;
 
             return response()->json([
                 'message' => 'Login realizado com sucesso!',
