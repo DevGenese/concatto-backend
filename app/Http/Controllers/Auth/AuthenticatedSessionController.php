@@ -25,11 +25,9 @@ class AuthenticatedSessionController extends Controller
         // Tentativa de autenticação
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            $token = TokenGuard::createTokenDriver('auth_token')->plainTextToken;
 
             return response()->json([
                 'message' => 'Login realizado com sucesso!',
-                'auth_token' => $token,
                 'user' => $user,
             ], 200);
         }
@@ -45,7 +43,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): Response
     {
-        Auth::guard('web')->logout();
+        Auth::guard(name: 'web')->logout();
 
         $request->session()->invalidate();
 
