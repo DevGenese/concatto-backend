@@ -43,8 +43,8 @@ return [
         'api' => [
             'driver' => 'token',
             'provider' => 'users',
-            'input_key' => 'auth_token',
-            'storage_key' => 'auth_token',
+            'input_key' => 'remember_token',
+            'storage_key' => 'remember_token',
         ],
     ],
 
