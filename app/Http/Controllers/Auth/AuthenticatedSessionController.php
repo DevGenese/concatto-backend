@@ -7,7 +7,6 @@ use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
-use \Illuminate\Auth\TokenGuard;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -25,9 +24,11 @@ class AuthenticatedSessionController extends Controller
         // Tentativa de autenticação
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
+            $token = $user->createToken('auth_token')->plainTextToken;
 
             return response()->json([
                 'message' => 'Login realizado com sucesso!',
+                'auth_token' => $token,
                 'user' => $user,
             ], 200);
         }
@@ -43,7 +44,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): Response
     {
-        Auth::guard(name: 'web')->logout();
+        Auth::guard('api')->logout();
 
         $request->session()->invalidate();
 
