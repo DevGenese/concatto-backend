@@ -14,7 +14,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): Response
+    public function store(LoginRequest $request): JsonResponse
     {
         // Validação dos dados de entrada
         $credentials = $request->validate([
@@ -27,7 +27,10 @@ class AuthenticatedSessionController extends Controller
             $user = Auth::user();
             $token = $user->createToken('remember_token')->plainTextToken;
 
-            return response('Login realizado com sucesso!', 200)->header('Authorization', $token);
+            return response()->json([
+                'token' => $token,
+                'user' => $user,
+            ]);
         }
 
         // Se a autenticação falhar
