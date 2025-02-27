@@ -50,6 +50,6 @@ class User extends Authenticatable
 
     public function schedules(): BelongsToMany
     {
-        return $this->belongsToMany(Schedule::class, 'schedule_user');
+        return $this->belongsToMany(Schedule::class, 'schedule_users');
     }
 }

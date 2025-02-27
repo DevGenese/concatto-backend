@@ -20,6 +20,6 @@ class Schedule extends Model
 
     public function users(): BelongsToManyRelationship
     {
-        return $this->belongsToManyRelationship(User::class, 'schedule_user');
+        return $this->belongsToManyRelationship(User::class, 'schedule_users');
     }
 }
