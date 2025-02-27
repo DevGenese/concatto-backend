@@ -20,7 +20,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('/locations', LocationController::class);
     Route::apiResource('/localities', LocalityController::class);
     Route::apiResource('/expense-types', ExpenseTypeController::class);
-    Route::get('/schedules/{userId}', [ScheduleController::class, 'index']);
+    Route::get('/schedules', [ScheduleController::class, 'index']);
     Route::apiResource('/schedule-users', ScheduleUserController::class);
     Route::apiResource('/expenses', ExpenseController::class);
 });

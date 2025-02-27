@@ -11,14 +11,9 @@ class ScheduleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($userId = null)
+    public function index()
     {
-        if (!$userId) {
-            return [];
-        }
-
-        $schedule = Schedule::where("user_id", $userId)->get();
-        return $schedule;
+        return Auth::user()->schedules;
     }
 
     /**
