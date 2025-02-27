@@ -16,12 +16,12 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->name('login');
 
 Route::middleware(['auth:sanctum'])->group(function () {
-    Route::apiResource('cooperatives', CooperativeController::class);
-    Route::apiResource('locations', LocationController::class);
-    Route::apiResource('localities', LocalityController::class);
-    Route::apiResource('expense-types', ExpenseTypeController::class);
-    Route::apiResource('schedules', ScheduleController::class);
-    Route::apiResource('schedule-users', ScheduleUserController::class);
-    Route::apiResource('expenses', ExpenseController::class);
+    Route::apiResource('/cooperatives', CooperativeController::class);
+    Route::apiResource('/locations', LocationController::class);
+    Route::apiResource('/localities', LocalityController::class);
+    Route::apiResource('/expense-types', ExpenseTypeController::class);
+    Route::apiResource('/schedules', ScheduleController::class);
+    Route::apiResource('/schedule-users', ScheduleUserController::class);
+    Route::apiResource('/expenses', ExpenseController::class);
 });
 
