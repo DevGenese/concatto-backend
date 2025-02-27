@@ -11,9 +11,14 @@ class ScheduleController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($userId = null)
     {
-        return Auth::user()->schedules;
+        if (!$userId) {
+            return [];
+        }
+
+        $schedule = Schedule::where("user_id", $userId)->get();
+        return $schedule;
     }
 
     /**
@@ -23,7 +28,7 @@ class ScheduleController extends Controller
     {
         $schedule = new Schedule();
         $schedule->fill($request->all())->save();
-        
+
         return $schedule;
     }
 
