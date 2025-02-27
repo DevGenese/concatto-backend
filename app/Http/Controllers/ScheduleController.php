@@ -13,7 +13,9 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        return Auth::user()->schedules;
+        $user = Auth::user();
+        $schedules = $user->schedules->makeHidden('pivot');
+        return Response()->json($schedules);
     }
 
     /**
