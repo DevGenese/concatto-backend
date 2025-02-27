@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\BelongsToManyRelationship;
 use Illuminate\Database\Eloquent\Model;
 
 class Schedule extends Model
@@ -16,4 +17,9 @@ class Schedule extends Model
         'location_id',
         'finished'
     ];
+
+    public function users(): BelongsToManyRelationship
+    {
+        return $this->belongsToManyRelationship(User::class, 'schedule_user');
+    }
 }

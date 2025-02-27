@@ -13,9 +13,7 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        $schedules = $user->schedules;
-        return $schedules;
+        return Auth::user()->schedules;
     }
 
     /**
