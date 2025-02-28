@@ -1,11 +1,8 @@
 <?php
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Schedule;
 use Illuminate\Database\Seeder;
-use App\Models\Locality;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Http;
 
 class SchedulesTableSeeder extends Seeder
 {
@@ -68,7 +65,8 @@ class SchedulesTableSeeder extends Seeder
         ];
         // Itera sobre os municípios
         foreach ($schedules as $schedule) {
-            Locality::create($schedule);
+            Schedule::create($schedule);
+
         }
     }
 }
