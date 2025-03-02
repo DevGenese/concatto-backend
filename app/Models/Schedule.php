@@ -27,7 +27,7 @@ class Schedule extends Model
         return $this->belongsToManyRelationship(User::class, 'schedule_users');
     }
 
-    public function getLocationAttribute(): string
+    public function getLocationAttribute()
     {
         $location = $this->belongsTo(Location::class);
         return $location;
