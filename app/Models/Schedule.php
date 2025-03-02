@@ -25,7 +25,7 @@ class Schedule extends Model
     //     'location_id',
     // ];
     protected $appends = [
-        'cooperative',
+        // 'cooperative',
         'location',
         'locality',
     ];
