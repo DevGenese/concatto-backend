@@ -35,7 +35,7 @@ class Schedule extends Model
 
     public function getLocalityAttribute(): BelongsTo
     {
-        return $this->belongsTo(Locality::class)->value('name');
+        return $this->belongsTo(Locality::class);
     }
 
     public function getCooperativeAttribute()
