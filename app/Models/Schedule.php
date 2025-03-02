@@ -27,18 +27,19 @@ class Schedule extends Model
         return $this->belongsToManyRelationship(User::class, 'schedule_users');
     }
 
-    public function getLocationAttribute(): BelongsTo
+    public function getLocationAttribute(): string
     {
-        return $this->belongsTo(Location::class);
+        $location = $this->belongsTo(Location::class);
+        return $location->value('city') . ' - ' . $location->value('UF');
     }
 
-    public function getLocalityAttribute(): BelongsTo
+    public function getLocalityAttribute(): string
     {
-        return $this->belongsTo(Locality::class);
+        return $this->belongsTo(Locality::class)->value('name');
     }
 
-    public function getCooperativeAttribute()
+    public function getCooperativeAttribute(): string
     {
-        return $this->belongsTo(Cooperative::class)->select('name');
+        return $this->belongsTo(Cooperative::class)->value('name');
     }
 }
