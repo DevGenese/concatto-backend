@@ -29,17 +29,16 @@ class Schedule extends Model
 
     public function getLocationAttribute()
     {
-        $location = $this->belongsTo(Location::class);
-        return $location;
+        return $this->hasOne(Location::class);
     }
 
-    public function getLocalityAttribute(): BelongsTo
+    public function getLocalityAttribute()
     {
-        return $this->belongsTo(Locality::class);
+        return $this->hasOne(Locality::class);
     }
 
     public function getCooperativeAttribute()
     {
-        return $this->belongsTo(Cooperative::class);
+        return $this->hasOne(Cooperative::class);
     }
 }
