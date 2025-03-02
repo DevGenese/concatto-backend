@@ -46,14 +46,8 @@ class Schedule extends Model
         return $this->hasOne(Locality::class);
     }
 
-    public function cooperative()
-    {
-        return $this->belongsTo(Cooperative::class, 'cooperative_id', 'id', );
-    }
-
     public function getCooperativeAttribute()
     {
-        $this->loadMissing('cooperative');
-        return $this->cooperative->name;
+        return $this->belongsTo(Cooperative::class, 'cooperative_id', 'id', )->value('name');
     }
 }
