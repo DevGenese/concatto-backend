@@ -23,6 +23,7 @@ class Schedule extends Model
         'cooperative_id',
         'locality_id',
         'location_id',
+        'pivot',
     ];
     protected $appends = [
         'cooperative',
@@ -47,15 +48,12 @@ class Schedule extends Model
 
     public function cooperative()
     {
-        return $this->hasOne(Cooperative::class, 'id', 'cooperative_id');
+        return $this->belongsTo(Cooperative::class, 'id', 'cooperative_id');
     }
 
     public function getCooperativeAttribute()
     {
-        if ($this->relationLoaded('cooperative')) {
-            return $this->cooperative->name;
-        }
-
-        return null;
+        $this->loadMissing('cooperative');
+        return $this->cooperative->name;
     }
 }

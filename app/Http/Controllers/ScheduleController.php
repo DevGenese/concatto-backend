@@ -15,8 +15,7 @@ class ScheduleController extends Controller
     {
         $user = Auth::user();
         $schedules = $user
-            ->schedules
-            ->makeHidden('pivot');
+            ->schedules;
         return Response()->json($schedules);
     }
 
