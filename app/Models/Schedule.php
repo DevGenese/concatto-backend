@@ -48,7 +48,7 @@ class Schedule extends Model
 
     public function cooperative()
     {
-        return $this->belongsTo(Cooperative::class, 'id', 'cooperative_id');
+        return $this->belongsTo(Cooperative::class, 'cooperative_id', 'id', );
     }
 
     public function getCooperativeAttribute()
