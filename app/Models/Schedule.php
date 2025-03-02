@@ -30,7 +30,7 @@ class Schedule extends Model
     public function getLocationAttribute(): string
     {
         $location = $this->belongsTo(Location::class);
-        return $location->value('city') . ' - ' . $location->value('UF');
+        return $location->city . ' - ' . $location->UF;
     }
 
     public function getLocalityAttribute(): BelongsTo
