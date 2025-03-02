@@ -19,8 +19,16 @@ class Schedule extends Model
         'finished'
     ];
 
-    protected $hidden = ['cooperative_id', 'locality_id', 'location_id'];
-    protected $appends = ['cooperative', 'location', 'locality'];
+    // protected $hidden = [
+    //     'cooperative_id',
+    //     'locality_id',
+    //     'location_id',
+    // ];
+    protected $appends = [
+        'cooperative',
+        'location',
+        'locality',
+    ];
 
     public function users(): BelongsToManyRelationship
     {
