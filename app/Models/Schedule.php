@@ -40,6 +40,7 @@ class Schedule extends Model
 
     public function getCooperativeAttribute(): string
     {
+        var_dump($this->belongsTo(Cooperative::class));
         return $this->belongsTo(Cooperative::class)->value('name');
     }
 }
