@@ -38,13 +38,12 @@ class Schedule extends Model
 
     public function getLocationAttribute()
     {
-        return $this->belongsTo(Location::class, 'location_id', 'id');
+        return $this->belongsTo(Location::class, 'location_id', 'id')->value('name');
     }
 
     public function getLocalityAttribute()
     {
-        $local = $this->belongsTo(Locality::class, 'locality_id', 'id');
-        return $local;
+        return $this->belongsTo(Locality::class, 'locality_id', 'id');
     }
 
     public function getCooperativeAttribute()
