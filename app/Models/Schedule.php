@@ -38,7 +38,7 @@ class Schedule extends Model
 
     public function getLocationAttribute()
     {
-        return $this->belongsTo(Location::class, 'location_id', 'id')->value('name');
+        return $this->belongsTo(Location::class, 'location_id', 'id');
     }
 
     public function getLocalityAttribute()
