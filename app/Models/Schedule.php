@@ -27,8 +27,8 @@ class Schedule extends Model
     ];
     protected $appends = [
         'cooperative',
-        // 'location',
-        // 'locality',
+        'location',
+        'locality',
     ];
 
     public function users(): BelongsToManyRelationship
@@ -43,7 +43,8 @@ class Schedule extends Model
 
     public function getLocalityAttribute()
     {
-        return $this->hasOne(Locality::class, 'locality_id', 'id');
+        $local = $this->hasOne(Locality::class, 'locality_id', 'id');
+        return $local->city . ' - ' . $local->UF;
     }
 
     public function getCooperativeAttribute()
