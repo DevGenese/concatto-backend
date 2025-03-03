@@ -39,7 +39,7 @@ class Schedule extends Model
     public function getLocationAttribute()
     {
         $local = $this->belongsTo(Location::class, 'locality_id', 'id')->select('city', 'UF');
-        return $local->city . ' - ' . $local->UF;
+        return $local;
     }
 
     public function getLocalityAttribute()
