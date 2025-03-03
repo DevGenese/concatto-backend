@@ -39,7 +39,7 @@ class Schedule extends Model
     public function getLocationAttribute()
     {
         $local = $this->hasOne(Location::class, 'locality_id', 'id');
-        return $local->city . ' - ' . $local->UF;
+        return $local->value('city') . ' - ' . $local->value('UF');
     }
 
     public function getLocalityAttribute()
