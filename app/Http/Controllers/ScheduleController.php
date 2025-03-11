@@ -14,6 +14,7 @@ class ScheduleController extends Controller
     public function index()
     {
         $user = Auth::user();
+        \Log::info($user);
         $schedules = $user
             ->schedules;
         return Response()->json($schedules);
