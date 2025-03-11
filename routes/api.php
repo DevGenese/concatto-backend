@@ -16,6 +16,9 @@ Route::post('/login', [AuthenticatedSessionController::class, 'store'])
     ->name('login');
 
 Route::middleware(['auth:sanctum'])->group(function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });
     Route::apiResource('/cooperatives', CooperativeController::class);
     Route::apiResource('/locations', LocationController::class);
     Route::apiResource('/localities', LocalityController::class);
