@@ -13,11 +13,7 @@ class ScheduleController extends Controller
      */
     public function index()
     {
-        $user = Auth::user();
-        \Log::info($user);
-        $schedules = $user
-            ->schedules;
-        return Response()->json($schedules);
+        return Response()->json(Auth::user()->schedules);
     }
 
     /**
@@ -42,9 +38,9 @@ class ScheduleController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Schedule $schedule)
+    public function show(Schedule $id)
     {
-        //
+        return Auth::user()->schedules()->find($id);
     }
 
     /**
