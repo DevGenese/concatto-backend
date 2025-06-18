@@ -17,7 +17,7 @@ return [
 
     'stateful' => explode(',', env('SANCTUM_STATEFUL_DOMAINS', sprintf(
         '%s%s%s',
-        'https://concatto-consultoria.org',
+        'mediumslateblue-leopard-689791.hostingersite.com',
         Sanctum::currentApplicationUrlWithPort(),
         env('FRONTEND_URL') ? ',' . parse_url(env('FRONTEND_URL'), PHP_URL_HOST) : ''
     ))),
