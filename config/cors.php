@@ -15,11 +15,11 @@ return [
     |
     */
 
-    'paths' => ['*'],
+    'paths' => ['api/*', 'sanctum/csrf-cookie', 'login', 'logout'],
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'concatto-consultoria.org')],
+    'allowed_origins' => ['http://localhost:5173', 'https://concatto-consultoria.org'],
 
     'allowed_origins_patterns' => [],
 

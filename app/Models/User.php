@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -33,6 +34,7 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'pivot',
     ];
 
     /**
@@ -48,8 +50,21 @@ class User extends Authenticatable
         ];
     }
 
-    public function schedules(): BelongsToMany
+    public function schedulesAll(): BelongsToMany
     {
         return $this->belongsToMany(Schedule::class, 'schedule_users');
+    }
+
+    public function schedulesOpen(): BelongsToMany
+    {
+        return $this->belongsToMany(Schedule::class, 'schedule_users')->where('finished', '=', false);
+    }
+
+    /**
+     * Get the expenses for the user.
+     */
+    public function expenses(): HasMany
+    {
+        return $this->hasMany(Expense::class);
     }
 }
