@@ -115,7 +115,14 @@ class ExpenseController extends Controller
                 $filePath = $file->storeAs('expenses', $fileName, "public");
 
                 if (!Storage::disk('public')->exists($filePath)) {
-                    return response()->json(['error' => 'Falha ao salvar o arquivo'], 500);
+                    return response()->json(['error' => 'Falha ao salvar o arquivo.'], 500);
+                }
+
+                if ($expense->attachment && !empty($expense->attachment)) {
+                    Storage::disk('public')->delete($expense->attachment);
+                    if (Storage::disk('public')->exists($expense->attachment)) {
+                        return response()->json(['error' => 'Falha ao remover o arquivo.'], 500);
+                    }
                 }
 
                 $expense->attachment = $filePath;
@@ -151,10 +158,9 @@ class ExpenseController extends Controller
             $expense = Expense::findOrFail($id);
 
             if ($expense->attachment && !empty($expense->attachment)) {
-                $filePath = storage_path('app/' . $expense->attachment);
-
-                if (file_exists($filePath)) {
-                    unlink($filePath);
+                Storage::disk('public')->delete($expense->attachment);
+                if (Storage::disk('public')->exists($expense->attachment)) {
+                    return response()->json(['error' => 'Falha ao remover o arquivo'], 500);
                 }
             }
 
