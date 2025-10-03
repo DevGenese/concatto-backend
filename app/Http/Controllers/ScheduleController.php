@@ -287,16 +287,45 @@ class ScheduleController extends Controller
             return response()->json(['error' => 'Parâmetros inválidos. Use year (ex: 2024) e month (1-12)'], 400);
         }
 
-        // Buscar as schedules do mês/ano especificado
-        $schedules = Schedule::
-            with([
-                'users' => function ($query) {
-                    $query->select('users.name');
-                }
+        // Query otimizada com joins e agregações no banco
+        $schedules = DB::table('schedules')
+            ->select([
+                'schedules.id',
+                'schedules.date',
+                'schedules.locality',
+                'schedules.advice_type',
+                'schedules.observations',
+                'schedules.location',
+                'schedules.hours',
+                'schedules.km',
+                'cooperatives.hour_value',
+                'cooperatives.km_value',
+                DB::raw("GROUP_CONCAT(users.name SEPARATOR ', ') as user_names"),
+                // Somatórios das despesas por tipo
+                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'displacement' THEN expenses.value ELSE 0 END), 0) as displacement_total"),
+                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'feeding' THEN expenses.value ELSE 0 END), 0) as feeding_total"),
+                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'materials' THEN expenses.value ELSE 0 END), 0) as materials_total"),
+                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'hosting' THEN expenses.value ELSE 0 END), 0) as hosting_total"),
+                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'taxi' THEN expenses.value ELSE 0 END), 0) as taxi_total"),
+                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'ticket' THEN expenses.value ELSE 0 END), 0) as ticket_total")
             ])
-            ->whereYear('date', $year)
-            ->whereMonth('date', $month)
-            ->orderBy('date')
+            ->leftJoin('schedule_user', 'schedules.id', '=', 'schedule_user.schedule_id')
+            ->leftJoin('users', 'schedule_user.user_id', '=', 'users.id')
+            ->leftJoin('expenses', 'schedules.id', '=', 'expenses.schedule_id')
+            ->leftJoin('cooperatives', 'schedules.cooperative_id', '=', 'cooperatives.id')
+            ->whereYear('schedules.date', $year)
+            ->whereMonth('schedules.date', $month)
+            ->groupBy([
+                'schedules.id',
+                'schedules.date',
+                'schedules.locality',
+                'schedules.advice_type',
+                'schedules.observations',
+                'schedules.location',
+                'schedules.hours',
+                'schedules.km'
+            ])
+            ->orderBy('schedules.date')
             ->get();
 
         if ($schedules->isEmpty()) {
@@ -328,9 +357,9 @@ class ScheduleController extends Controller
                 'Observações',
                 'Local/Escola',
                 'Horas',
-                'Horas/R$', // não preencher
+                'Horas/R$',
                 'KM',
-                'KM/R$', // Não preencher
+                'KM/R$',
                 'Deslocamento',
                 'Alimentação',
                 'Materiais',
@@ -342,22 +371,22 @@ class ScheduleController extends Controller
             // Dados
             foreach ($schedules as $schedule) {
                 fputcsv($file, [
-                    $schedule->formattedDate,
+                    Carbon::parse($schedule->date)->format('d/m/Y'), // Data formatada
                     $schedule->locality,
-                    $schedule->users->pluck('name')->join(', '),
+                    $schedule->user_names,
                     $schedule->advice_type,
                     $schedule->observations,
                     $schedule->location,
-                    'Horas', // somatorio despesas
-                    '', // nao preencher
-                    'KM', // somatorio despesas
-                    '', // nao preencher
-                    'Deslocamento', // somatorio despesas
-                    'Alimentação', // somatorio despesas
-                    'Materiais', // somatorio despesas
-                    'Hospedagem', // somatorio despesas
-                    'Taxi/Uber', // somatorio despesas
-                    'Passagem' // somatorio despesas
+                    $schedule->hours,
+                    $schedule->hour_value,
+                    $schedule->km,
+                    $schedule->km_value,
+                    $schedule->displacement_total,
+                    $schedule->feeding_total,
+                    $schedule->materials_total,
+                    $schedule->hosting_total,
+                    $schedule->taxi_total,
+                    $schedule->ticket_total
                 ], ';');
             }
 
