@@ -197,7 +197,6 @@ class ScheduleController extends Controller
             $schedule->end_time = $validated['end_time'];
             $schedule->locality_id = $validated['locality_id'];
             $schedule->location_id = $validated['location_id'];
-            $schedule->finished = $validated['finished'] ? (boolean) $validated['finished'] : $schedule->finished;
             $schedule->observations = $validated['observations'];
             $schedule->date = $validated['start_date'];
             $schedule->start_time = $validated['start_time'];
