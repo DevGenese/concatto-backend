@@ -287,44 +287,57 @@ class ScheduleController extends Controller
             return response()->json(['error' => 'Parâmetros inválidos. Use year (ex: 2024) e month (1-12)'], 400);
         }
 
-        // Query otimizada com joins e agregações no banco
+        $expensesSubquery = DB::table('expenses')
+            ->select([
+                'schedule_id',
+                DB::raw('SUM(CASE WHEN expense_type_id = 1 THEN amount ELSE 0 END) as quantidade_horas'),
+                DB::raw('SUM(CASE WHEN expense_type_id = 5 THEN amount ELSE 0 END) as quilometros_km'),
+                DB::raw('SUM(CASE WHEN expense_type_id = 8 THEN amount ELSE 0 END) as alimentacao_rs'),
+                DB::raw('SUM(CASE WHEN expense_type_id = 9 THEN amount ELSE 0 END) as materiais_rs'),
+                DB::raw('SUM(CASE WHEN expense_type_id = 10 THEN amount ELSE 0 END) as hospedagem_rs'),
+                DB::raw('SUM(CASE WHEN expense_type_id = 11 THEN amount ELSE 0 END) as taxi_rs'),
+                DB::raw('SUM(CASE WHEN expense_type_id = 12 THEN amount ELSE 0 END) as passagem_rs')
+            ])
+            ->groupBy('schedule_id');
+
+        $usersSubquery = DB::table('schedule_users')
+            ->select([
+                'schedule_id',
+                DB::raw('GROUP_CONCAT(users.name SEPARATOR ", ") as user_names')
+            ])
+            ->join('users', 'schedule_users.user_id', '=', 'users.id')
+            ->groupBy('schedule_id');
+
         $schedules = DB::table('schedules')
             ->select([
                 'schedules.id',
                 'schedules.date',
-                'schedules.locality',
+                'locations.name AS locality',
                 'schedules.advice_type',
                 'schedules.observations',
-                'schedules.location',
-                'schedules.hours',
-                'schedules.km',
+                DB::raw('CONCAT(localities.city, "/", localities.UF) AS location'),
                 'cooperatives.hour_value',
                 'cooperatives.km_value',
-                DB::raw("GROUP_CONCAT(users.name SEPARATOR ', ') as user_names"),
-                // Somatórios das despesas por tipo
-                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'displacement' THEN expenses.value ELSE 0 END), 0) as displacement_total"),
-                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'feeding' THEN expenses.value ELSE 0 END), 0) as feeding_total"),
-                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'materials' THEN expenses.value ELSE 0 END), 0) as materials_total"),
-                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'hosting' THEN expenses.value ELSE 0 END), 0) as hosting_total"),
-                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'taxi' THEN expenses.value ELSE 0 END), 0) as taxi_total"),
-                DB::raw("COALESCE(SUM(CASE WHEN expenses.type = 'ticket' THEN expenses.value ELSE 0 END), 0) as ticket_total")
+                'users_subquery.user_names',
+                'expenses_subquery.quantidade_horas',
+                'expenses_subquery.quilometros_km',
+                'expenses_subquery.alimentacao_rs',
+                'expenses_subquery.materiais_rs',
+                'expenses_subquery.hospedagem_rs',
+                'expenses_subquery.taxi_rs',
+                'expenses_subquery.passagem_rs'
             ])
-            ->leftJoin('schedule_user', 'schedules.id', '=', 'schedule_user.schedule_id')
-            ->leftJoin('users', 'schedule_user.user_id', '=', 'users.id')
-            ->leftJoin('expenses', 'schedules.id', '=', 'expenses.schedule_id')
             ->leftJoin('cooperatives', 'schedules.cooperative_id', '=', 'cooperatives.id')
+            ->leftJoin('localities', 'schedules.locality_id', '=', 'localities.id')
+            ->leftJoin('locations', 'schedules.location_id', '=', 'locations.id')
+            ->leftJoinSub($usersSubquery, 'users_subquery', function ($join) {
+                $join->on('schedules.id', '=', 'users_subquery.schedule_id');
+            })
+            ->leftJoinSub($expensesSubquery, 'expenses_subquery', function ($join) {
+                $join->on('schedules.id', '=', 'expenses_subquery.schedule_id');
+            })
             ->whereYear('schedules.date', $year)
             ->whereMonth('schedules.date', $month)
-            ->groupBy([
-                'schedules.id',
-                'schedules.date',
-                'schedules.locality',
-                'schedules.advice_type',
-                'schedules.observations',
-                'schedules.location',
-                'schedules.hours',
-                'schedules.km'
-            ])
             ->orderBy('schedules.date')
             ->get();
 
@@ -360,7 +373,6 @@ class ScheduleController extends Controller
                 'Horas/R$',
                 'KM',
                 'KM/R$',
-                'Deslocamento',
                 'Alimentação',
                 'Materiais',
                 'Hospedagem',
@@ -371,22 +383,21 @@ class ScheduleController extends Controller
             // Dados
             foreach ($schedules as $schedule) {
                 fputcsv($file, [
-                    Carbon::parse($schedule->date)->format('d/m/Y'), // Data formatada
+                    Carbon::parse($schedule->date)->format('H:i d/m/Y'), // Data formatada
                     $schedule->locality,
                     $schedule->user_names,
                     $schedule->advice_type,
                     $schedule->observations,
                     $schedule->location,
-                    $schedule->hours,
+                    $schedule->quantidade_horas,
                     $schedule->hour_value,
-                    $schedule->km,
+                    $schedule->quilometros_km,
                     $schedule->km_value,
-                    $schedule->displacement_total,
-                    $schedule->feeding_total,
-                    $schedule->materials_total,
-                    $schedule->hosting_total,
-                    $schedule->taxi_total,
-                    $schedule->ticket_total
+                    $schedule->alimentacao_rs,
+                    $schedule->materiais_rs,
+                    $schedule->hospedagem_rs,
+                    $schedule->taxi_rs,
+                    $schedule->passagem_rs
                 ], ';');
             }
 
