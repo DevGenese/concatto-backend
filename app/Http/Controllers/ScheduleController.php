@@ -311,10 +311,11 @@ class ScheduleController extends Controller
             ->select([
                 'schedules.id',
                 'schedules.date',
-                'locations.name AS locality',
+                'schedules.start_time',
+                DB::raw('CONCAT(localities.city, "/", localities.UF) AS location'),
                 'schedules.advice_type',
                 'schedules.observations',
-                DB::raw('CONCAT(localities.city, "/", localities.UF) AS location'),
+                'locations.name AS locality',
                 'cooperatives.hour_value',
                 'cooperatives.km_value',
                 'users_subquery.user_names',
@@ -338,6 +339,7 @@ class ScheduleController extends Controller
             ->whereYear('schedules.date', $year)
             ->whereMonth('schedules.date', $month)
             ->orderBy('schedules.date')
+            ->orderBy('schedules.start_time')
             ->get();
 
         if ($schedules->isEmpty()) {
@@ -382,7 +384,7 @@ class ScheduleController extends Controller
             // Dados
             foreach ($schedules as $schedule) {
                 fputcsv($file, [
-                    Carbon::parse($schedule->date)->format('H:i d/m/Y'), // Data formatada
+                    Carbon::parse($schedule->start_time . ' ' . $schedule->date)->format('H:i d/m/Y'), // Data formatada
                     $schedule->locality,
                     $schedule->user_names,
                     $schedule->advice_type,
