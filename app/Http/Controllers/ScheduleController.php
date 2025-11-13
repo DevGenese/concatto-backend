@@ -56,7 +56,44 @@ class ScheduleController extends Controller
     /**
      * Display a listing user of the resource.
      */
-    public function index()
+    public function index(Request $request)
+    {
+        $month = $request->has('month') && !empty($request->month) ? $request->month : now()->month;
+        $year = $request->has('year') && !empty($request->year) ? $request->year : now()->year;
+        $perPage = $request->get('rowsPerPage', -1);
+        $page = $request->get('page', 0);
+
+        $schedules = Schedule::query();
+
+
+        $schedules
+            ->when($year, function ($query) use ($year) {
+                $query->whereYear('date', '=', $year);
+            })
+            ->when($month, function ($query) use ($month) {
+                $query->whereMonth('date', '=', $month);
+            });
+
+        $data = $schedules->with([
+            'users' => function ($query) {
+                $query->select('users.id', 'users.name');
+            }
+        ])
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->get();
+
+        $paginator = new LengthAwarePaginator(
+            $data->forPage(page: $page, perPage: $perPage), // Itens da página atual
+            $data->count(), // Total de itens
+            $perPage,
+            $page,
+        );
+
+        return response()->json($paginator);
+    }
+
+    public function open_schedule()
     {
         return Response()->json(Auth::user()->schedulesOpen);
     }
