@@ -12,7 +12,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\ScheduleUserController;
 use App\Http\Controllers\ExpenseController;
 
-Route::post('/login', [AuthenticatedTokenController::class, 'login']);
+Route::post('/login', [AuthenticatedTokenController::class, 'login'])->middleware('guest');
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/logout', [AuthenticatedTokenController::class, 'logout']);

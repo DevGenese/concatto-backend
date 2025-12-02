@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'mediumslateblue-leopard-689791.hostingersite.com'),
+    'url' => env('APP_URL', 'https://concatto-consultoria.org'),
 
     /*
     |--------------------------------------------------------------------------
